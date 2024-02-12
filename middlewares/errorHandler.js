@@ -6,6 +6,6 @@ export function errorHandler(logger) {
 			console.log(err);
 		}
 		return res.bang.internalServerError("Unexpected error occurred");
-	}
+	};
 }
 

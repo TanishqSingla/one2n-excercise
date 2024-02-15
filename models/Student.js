@@ -16,7 +16,6 @@ Student.init({
 			min: 2,
 			isAlpha: true
 		},
-		field: "first_name"
 	},
 	lastName: {
 		type: DataTypes.STRING,
@@ -25,7 +24,6 @@ Student.init({
 			min: 2,
 			isAlpha: true
 		},
-		field: "last_name"
 	},
 	age: {
 		type: DataTypes.SMALLINT,
@@ -42,5 +40,6 @@ Student.init({
 }, {
 	sequelize: db,
 	modelName: "Student",
-	tableName: "students"
+	tableName: "students",
+	underscored: true
 });

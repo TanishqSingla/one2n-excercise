@@ -78,7 +78,7 @@ export class StudentController {
 		**/
 	static async patch(req, res, next) {
 		try {
-			const { queryError } = Schemas.patchQuerySchema.validate(req.params);
+			const { queryError } = Schemas.patchParamsSchema.validate(req.params);
 			if(queryError)
 				return res.bang.unprocessableEntity(queryError.message);
 

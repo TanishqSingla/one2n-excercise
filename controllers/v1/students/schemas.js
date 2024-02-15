@@ -5,22 +5,22 @@ export const getByIdSchema = Joi.object().keys({
 });
 
 export const putSchema = Joi.object().keys({
-	firstName: Joi.string().required(),
-	lastName: Joi.string().required(),
+	firstName: Joi.string().required().min(2),
+	lastName: Joi.string().required().min(2),
 	age: Joi.number().required(),
 	year: Joi.number().default(1)
 });
 
 export const deleteSchema = Joi.object().keys({
-	id: Joi.number().required()
+	id: Joi.number().required().min(1)
 });
 
-export const patchQuerySchema = Joi.object().keys({
-	id: Joi.number().required()
+export const patchParamsSchema = Joi.object().keys({
+	id: Joi.number().required().min(1)
 });
 export const patchBodySchema = Joi.object().keys({
-	firstName: Joi.string().optional(),
-	lastName: Joi.string().optional(),
+	firstName: Joi.string().min(2).optional(),
+	lastName: Joi.string().min(2).optional(),
 	age: Joi.number().optional(),
-	year: Joi.number().optional()
+	year: Joi.number().optional().min(1)
 });

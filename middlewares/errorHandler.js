@@ -1,11 +1,7 @@
-export function errorHandler(logger) {
-	return (err, _req, res, _next) => {
-		if(logger) {
-			logger(err);
-		} else {
-			console.log(err);
-		}
-		return res.bang.internalServerError("Unexpected error occurred");
-	};
+import logger from "../utils/Logger.js";
+
+export function errorHandler(err, _req, res, _next) {
+	logger.ERROR(err);
+	return res.bang.internalServerError("Unexpected error occurred");
 }
 

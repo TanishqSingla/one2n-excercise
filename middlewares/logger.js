@@ -1,3 +1,5 @@
+import logger from "../utils/Logger.js";
+
 class RequestMeta {
 	id;
 	startTime;
@@ -12,7 +14,7 @@ class RequestMeta {
 	}
 }
 
-export const logger = (req, res, next) => {
+export const loggerMiddleware = (req, res, next) => {
 	req.meta = new RequestMeta();
 
 	const Request = {
@@ -22,7 +24,7 @@ export const logger = (req, res, next) => {
 		Body:     req.body,
 		Query:    req.query,
 	};
-	console.log(Request);
+	logger.INFO("Request", Request);
 
 	const original = res.json;
 	res.json = function (_data) {
@@ -34,7 +36,7 @@ export const logger = (req, res, next) => {
 			RequestBody:   req.body,
 			Query:         req.query,
 		};
-		console.log(Response);
+		logger.INFO("Response", Response);
 
 		original.apply(this, arguments);
 	};

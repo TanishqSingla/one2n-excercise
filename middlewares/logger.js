@@ -1,5 +1,5 @@
 class RequestMeta {
-	id
+	id;
 	startTime;
 
 	constructor() {
@@ -21,7 +21,7 @@ export const logger = (req, res, next) => {
 		Time:     new Date().toISOString(),
 		Body:     req.body,
 		Query:    req.query,
-	}
+	};
 	console.log(Request);
 
 	const original = res.json;
@@ -33,11 +33,11 @@ export const logger = (req, res, next) => {
 			TimeElapsed:   req.meta.timeElapsed,
 			RequestBody:   req.body,
 			Query:         req.query,
-		}
+		};
 		console.log(Response);
 
 		original.apply(this, arguments);
-	}
+	};
 
 	next();
-}
+};

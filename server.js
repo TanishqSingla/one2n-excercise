@@ -12,7 +12,9 @@ if(process.env.NODE_ENV === "production" || !process.env.NODE_ENV) {
 export const db = createDBConn();
 	
 db.authenticate()
-	.then(() => logger.INFO("successfully connected to DB"))
+	.then(() => { 
+		logger.INFO("successfully connected to DB");
+	})
 	.catch((err) => logger.ERROR("Failed to connect to db", err));
 
 app.listen(process.env.PORT, () => console.log(`server listening on http://127.0.0.1:${process.env.PORT}`));

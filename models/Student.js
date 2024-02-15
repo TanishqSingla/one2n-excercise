@@ -1,9 +1,8 @@
 import { Model, DataTypes } from "sequelize";
-import { db } from "../server";
 
 export class Student extends Model {}
 
-Student.init({
+export const initStudentModel = (db) => Student.init({
 	id: {
 		primaryKey: true,
 		type: DataTypes.UUID,

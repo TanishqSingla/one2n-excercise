@@ -5,8 +5,8 @@ export class Student extends Model {}
 export const initStudentModel = (db) => Student.init({
 	id: {
 		primaryKey: true,
-		type: DataTypes.UUID,
-		defaultValue: DataTypes.UUID,
+		type: DataTypes.BIGINT,
+		autoIncrement: true
 	},
 	firstName: {
 		type: DataTypes.STRING,

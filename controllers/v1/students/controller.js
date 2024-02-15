@@ -23,13 +23,13 @@ export class StudentController {
 		**/
 	static async getById(req, res, next) {
 		try {
-			const { error, value } = getByIdSchema.validate(req.query);
+			const { error, value } = getByIdSchema.validate(req.params);
 			if(error)
 				return res.bang.unprocessableEntity(error.message);
 
 			const student = await Student.findByPk(value.id);
 			if(!student)
-				res.bang.notFound("No such record exists");
+				return res.bang.notFound("No such record exists");
 
 			return res.status(200).json({
 				message: "Record found",

@@ -11,7 +11,8 @@ export const createDBConn = () => {
 		password: process.env.DB_PASS,
 		port: process.env.DB_PORT,
 		username: process.env.DB_USER,
-		database: process.env.DB_NAME
+		database: process.env.DB_NAME,
+		logging: process.env.NODE_ENV === "development",
 	});
 
 	initStudentModel(db);

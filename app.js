@@ -6,6 +6,7 @@ import { loggerMiddleware } from "./middlewares/logger.js";
 
 export const app = express();
 
+app.use(express.json());
 app.use(expressBang());
 if(["development", "staging"].includes(process.env.NODE_ENV)) {
 	app.use(loggerMiddleware);

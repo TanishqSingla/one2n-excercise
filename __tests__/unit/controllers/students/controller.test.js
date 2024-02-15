@@ -1,4 +1,4 @@
-import { afterEach, describe, it, expect } from "bun:test";
+import { afterEach, beforeEach, describe, it, expect } from "bun:test";
 import sinon from "sinon";
 import { Student } from "../../../../models/Student";
 import request from "supertest";
@@ -102,3 +102,156 @@ describe("GET /students/student/:id", () => {
 		});
 	});
 });
+
+describe("PUT /students/student", () => {
+	const validPayload = {
+		firstName: "joe",
+		lastName: "doe",
+		age: 18,
+		year: 2
+	};
+	let mockPayload = { ...validPayload };
+
+	const buildStub = sinon.stub(Student, "build");
+	const saveStub = sinon.stub(Student, "save");
+
+	beforeEach(() => {
+		mockPayload = { ...validPayload };
+	});
+
+	afterEach(() => {
+		sinon.reset();
+	});
+
+	it("422 - firstName is required", async () => {
+		delete mockPayload.firstName;
+
+		const result = await request(app).put("/v1/students/student").send(mockPayload);
+
+		expect(result.status).toBe(422);
+		expect(result.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"firstName" is required`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - firstName must be of length greater than or equal to 2", async () => {
+		mockPayload.firstName = "h";
+
+		const result = await request(app).put("/v1/students/student").send(mockPayload);
+
+		expect(result.status).toBe(422);
+		expect(result.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"firstName" length must be at least 2 characters long`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - lastName is required", async () => {
+		delete mockPayload.lastName;
+
+		const result = await request(app).put("/v1/students/student").send(mockPayload);
+
+		expect(result.status).toBe(422);
+		expect(result.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"lastName" is required`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - lastName must be of length greater than or equal to 2", async () => {
+		mockPayload.lastName = "h";
+
+		const result = await request(app).put("/v1/students/student").send(mockPayload);
+
+		expect(result.status).toBe(422);
+		expect(result.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"lastName" length must be at least 2 characters long`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - age is required", async () => {
+		delete mockPayload.age;
+
+		const result = await request(app).put("/v1/students/student").send(mockPayload);
+
+		expect(result.status).toBe(422);
+		expect(result.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"age" is required`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - age must be a number", async () => {
+		mockPayload.age = "abc";
+
+		const result = await request(app).put("/v1/students/student").send(mockPayload);
+
+		expect(result.status).toBe(422);
+		expect(result.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"age" must be a number`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - year must be a number", async () => {
+		mockPayload.year = "abc";
+
+		const result = await request(app).put("/v1/students/student").send(mockPayload);
+
+		expect(result.status).toBe(422);
+		expect(result.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"year" must be a number`,
+			statusCode: 422,
+		});
+	});
+
+	it("409 - Duplicate record", async () => {
+		buildStub.returns({ isNewRecord: false });
+
+		const res = await request(app).put("/v1/students/student").send(validPayload);
+
+		expect(res.status).toBe(409);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[409],
+			message: "Duplicate data",
+			statusCode: 409
+		});
+	});
+
+	it("500 - Duplicate record", async () => {
+		buildStub.returns({ isNewRecord: true });
+		saveStub.returns(null);
+
+		const res = await request(app).put("/v1/students/student").send(validPayload);
+
+		expect(res.status).toBe(500);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[500],
+			message: "Failed to create student record",
+			statusCode: 500
+		});
+	});
+
+	it("201 - Success", async () => {
+		buildStub.returns({ isNewRecord: true });
+		saveStub.returns({ ...validPayload });
+
+		const res = await request(app).put("/v1/students/student").send(validPayload);
+
+		expect(res.status).toBe(201);
+		expect(res.body).toEqual({
+			message: "Successfully created student record",
+			data: { ...validPayload }
+		});
+	});
+});
+

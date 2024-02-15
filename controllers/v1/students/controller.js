@@ -62,10 +62,10 @@ export class StudentController {
 
 			const result = await newStudent.save();
 			if(!result)
-				return res.bang.internalServerError("Failed to create user");
+				return res.bang.internalServerError("Failed to create student record");
 
 			return res.status(201).json({
-				message: "Successfully created student",
+				message: "Successfully created student record",
 				data: result.dataValues
 			});
 		} catch (err) {

@@ -360,3 +360,56 @@ describe("PATCH - /students/student/:id", () => {
 		expect(res.body).toEqual({ message: "User updated successfully" });
 	});
 });
+
+describe("DELETE - /students/student/:id", () => {
+	const destroyStub = sinon.stub(Student, "destroy");
+
+	afterEach(() => sinon.reset());
+
+	it("422 - id must be a number", async () => {
+		const res = await request(app).delete("/v1/students/student/abc");
+
+		expect(res.status).toBe(422);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"id" must be a number`,
+			statusCode: 422,
+		});
+	});
+
+	it("500 - Failed to delete user", async () => {
+		destroyStub.returns(null);
+
+		const res = await request(app).delete("/v1/students/student/123");
+
+		expect(res.status).toBe(500);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[500],
+			message: `Failed to delete user`,
+			statusCode: 500,
+		});
+	});
+
+	it("500 - Expected Error", async () => {
+		destroyStub.throws(new Error("Expected Error"));
+
+		const res = await request(app).delete("/v1/students/student/123");
+
+		expect(res.status).toBe(500);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[500],
+			message: "Expected Error",
+			statusCode: 500,
+		});
+	});
+
+	it("200 - Successfully deleted the user", async () => {
+		destroyStub.returns(true);
+
+
+		const res = await request(app).delete("/v1/students/student/123");
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual({ message: "Successfully deleted the user" });
+	});
+});

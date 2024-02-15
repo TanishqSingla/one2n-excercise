@@ -78,19 +78,19 @@ export class StudentController {
 		**/
 	static async patch(req, res, next) {
 		try {
-			const { queryError } = Schemas.patchParamsSchema.validate(req.params);
-			if(queryError)
-				return res.bang.unprocessableEntity(queryError.message);
+			const { error: paramError } = Schemas.patchParamsSchema.validate(req.params);
+			if(paramError)
+				return res.bang.unprocessableEntity(paramError.message);
 
 			const { error, value } = Schemas.patchBodySchema.validate(req.body); 
 			if(error)
-				return res.bang.unprocessableEntity(error);
+				return res.bang.unprocessableEntity(error.message);
 
 			const newStudent = await Student.update(value, { where: { id: req.params.id } });
 			if(!newStudent)
 				return res.bang.internalServerError("Unable to update user");
 
-			return res.status(200).json({ message: "User updated succesfully" });
+			return res.status(200).json({ message: "User updated successfully" });
 		} catch (err) {
 			next(err);
 		} 

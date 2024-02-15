@@ -113,7 +113,6 @@ describe("PUT /students/student", () => {
 	let mockPayload = { ...validPayload };
 
 	const buildStub = sinon.stub(Student, "build");
-	const saveStub = sinon.stub(Student, "save");
 
 	beforeEach(() => {
 		mockPayload = { ...validPayload };
@@ -228,8 +227,7 @@ describe("PUT /students/student", () => {
 	});
 
 	it("500 - Duplicate record", async () => {
-		buildStub.returns({ isNewRecord: true });
-		saveStub.returns(null);
+		buildStub.returns({ save: () => (null), isNewRecord: true });
 
 		const res = await request(app).put("/v1/students/student").send(validPayload);
 
@@ -241,9 +239,21 @@ describe("PUT /students/student", () => {
 		});
 	});
 
+	it("500 - Expected Error", async () => {
+		buildStub.throws(new Error("Expected Error"));
+
+		const res = await request(app).put("/v1/students/student").send(validPayload);
+
+		expect(res.status).toBe(500);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[500],
+			message: "Expected Error",
+			statusCode: 500
+		});
+	});
+
 	it("201 - Success", async () => {
-		buildStub.returns({ isNewRecord: true });
-		saveStub.returns({ ...validPayload });
+		buildStub.returns({ save: () => ({dataValues: {...validPayload}}), isNewRecord: true });
 
 		const res = await request(app).put("/v1/students/student").send(validPayload);
 
@@ -255,3 +265,98 @@ describe("PUT /students/student", () => {
 	});
 });
 
+describe("PATCH - /students/student/:id", () => {
+	const updateStub = sinon.stub(Student, "update");
+
+	afterEach(() => sinon.reset);
+
+	it("422 - id must be a number", async () => {
+		const res = await request(app).patch("/v1/students/student/abc");
+
+		expect(res.status).toBe(422);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"id" must be a number`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - firstName must be a string", async () => {
+		const res = await request(app).patch("/v1/students/student/123").send({ firstName: 123 });
+
+		expect(res.status).toBe(422);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"firstName" must be a string`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - firstName must be a string", async () => {
+		const res = await request(app).patch("/v1/students/student/123").send({ firstName: "h" });
+
+		expect(res.status).toBe(422);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"firstName" length must be at least 2 characters long`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - lastName must be a string", async () => {
+		const res = await request(app).patch("/v1/students/student/123").send({ lastName: 123 });
+
+		expect(res.status).toBe(422);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"lastName" must be a string`,
+			statusCode: 422,
+		});
+	});
+
+	it("422 - lastName must be a string", async () => {
+		const res = await request(app).patch("/v1/students/student/123").send({ lastName: "h" });
+
+		expect(res.status).toBe(422);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[422],
+			message: `"lastName" length must be at least 2 characters long`,
+			statusCode: 422,
+		});
+	});
+
+	it("500 - unabled to update user", async () => {
+		updateStub.returns(null);
+
+		const res = await request(app).patch("/v1/students/student/123").send({ lastName: "hero" });
+
+		expect(res.status).toBe(500);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[500],
+			message: "Unable to update user",
+			statusCode: 500,
+		});
+	});
+
+	it("500 - Expected Error", async () => {
+		updateStub.throws(new Error("Expected Error"));
+
+		const res = await request(app).patch("/v1/students/student/123").send({ lastName: "hero" });
+
+		expect(res.status).toBe(500);
+		expect(res.body).toEqual({
+			error: STATUS_CODES[500],
+			message: "Expected Error",
+			statusCode: 500,
+		});
+	});
+
+	it("200 - Update Successful", async () => {
+		updateStub.returns({ lastName: "hero" });
+
+		const res = await request(app).patch("/v1/students/student/123").send({ lastName: "hero" });
+
+		expect(res.status).toBe(200);
+		expect(res.body).toEqual({ message: "User updated successfully" });
+	});
+});

@@ -2,7 +2,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "NODE_ENV=development node --watch server.js",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production node server.js",
+		"lint": "eslint .",
+		"lint:fix": "eslint --fix ."
   },
   "type": "module",
   "keywords": [],
@@ -14,6 +16,9 @@
     "express-bang": "^0.2.0"
   },
   "devDependencies": {
-    "@types/express": "^4.17.21"
-  }
+    "@types/express": "^4.17.21",
+    "eslint": "^8.56.0",
+    "pre-commit": "^1.2.2"
+  },
+	"pre-commit": ["lint"]
 }

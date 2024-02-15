@@ -15,7 +15,10 @@
   "dependencies": {
     "dotenv": "^16.4.1",
     "express": "^4.18.2",
-    "express-bang": "^0.2.0"
+    "express-bang": "^0.2.0",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.0"
   },
   "devDependencies": {
     "@types/bun": "^1.0.5",

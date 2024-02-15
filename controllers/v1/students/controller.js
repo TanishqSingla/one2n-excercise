@@ -1,4 +1,4 @@
-import { deleteSchema, getByIdSchema, putSchema } from "./schemas.js";
+import * as Schemas from "./schemas.js";
 import { Student } from "../../../models/Student.js";
 
 export class StudentController {
@@ -23,7 +23,7 @@ export class StudentController {
 		**/
 	static async getById(req, res, next) {
 		try {
-			const { error, value } = getByIdSchema.validate(req.params);
+			const { error, value } = Schemas.getByIdSchema.validate(req.params);
 			if(error)
 				return res.bang.unprocessableEntity(error.message);
 
@@ -47,7 +47,7 @@ export class StudentController {
 		**/
 	static async put(req, res, next) {
 		try {
-			const { error, value } = putSchema.validate(req.body);
+			const { error, value } = Schemas.putSchema.validate(req.body);
 			if(error)
 				return res.bang.unprocessableEntity(error.message);
 
@@ -75,11 +75,34 @@ export class StudentController {
 	}
 
 	/**
-		* Controller for DELET /students/student/:id
+		* Controller for PATCH /students/student/:id
+		**/
+	static async patch(req, res, next) {
+		try {
+			const { queryError } = Schemas.patchQuerySchema.validate(req.params);
+			if(queryError)
+				return res.bang.unprocessableEntity(queryError.message);
+
+			const { error, value } = Schemas.patchBodySchema.validate(req.body); 
+			if(error)
+				return res.bang.unprocessableEntity(error);
+
+			const newStudent = await Student.update(value, { where: { id: req.params.id } });
+			if(!newStudent)
+				return res.bang.internalServerError("Unable to update user");
+
+			return res.status(200).json({ message: "User updated succesfully" });
+		} catch (err) {
+			next(err);
+		} 
+	}
+
+	/**
+		* Controller for DELETE /students/student/:id
 		**/
 	static async delete(req, res, next) {
 		try {
-			const { error, value } = deleteSchema.validate(req.params);
+			const { error, value } = Schemas.deleteSchema.validate(req.params);
 			if(error)
 				return res.bang.unprocessableEntity(error.message);
 

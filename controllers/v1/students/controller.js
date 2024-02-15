@@ -9,7 +9,6 @@ export class StudentController {
 		try {
 			const students = await Student.findAll();
 
-			console.log(students);
 			return res.status(200).json({
 				data: students
 			});

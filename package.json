@@ -28,6 +28,7 @@
     "eslint": "^8.56.0",
     "nodemon": "^3.0.3",
     "pre-commit": "^1.2.2",
+    "sinon": "^17.0.1",
     "supertest": "^6.3.4"
   },
   "pre-commit": [

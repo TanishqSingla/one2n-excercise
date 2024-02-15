@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const getByIdSchema = Joi.object().keys({
-	id: Joi.number().required(),
+	id: Joi.number().min(1).required(),
 });
 
 export const putSchema = Joi.object().keys({

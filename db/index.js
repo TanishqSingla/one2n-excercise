@@ -1,5 +1,8 @@
 import { Sequelize } from "sequelize";
 
+/**
+	* Returns db connection object
+	**/
 export const createDBConn = () => new Sequelize({
 	host: process.env.DB_HOST,
 	dialect: "postgres",
